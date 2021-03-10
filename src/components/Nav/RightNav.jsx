@@ -11,8 +11,9 @@ const Ul = styled.ul`
   
     flex-flow: column nowrap;
     background-color: #fff;
-    position: fixed;
+    position: absolute;
     transform: ${({ open }) => open ? 'translateX(0)' : 'translateX(100%)'};
+    z-index: 19; 
     top: 0;
     right: 0;
     height: 100vh;
@@ -33,17 +34,17 @@ const RightNav = ({ open }) => {
   return (
     <Ul open={open}>
       <li>Good Samaritan Law</li>
-      <li>Preventing an Overdose</li>
-      <li>How to Give Naloxone
+      <a href="/prevent-overdose"><li>Preventing an Overdose</li></a>
+      <a href="/overdose-response"><li>How to Give Naloxone
             <li className="inner-list">Signs of an Overdose</li>
             <li className="inner-list">Giving Naloxone</li>
             <li className="inner-list">Calling Emergency Medical Help</li>
             <li className="inner-list">Naloxone FAQs</li>        
-      </li>
-      <li>Where can I get Naloxone
+      </li></a>
+      <a href="/public-resources"><li>Where can I get Naloxone
             <li className="inner-list">Free Public Resources</li>
             <li className="inner-list">Pharmacy Finder</li>
-      </li>
+      </li></a>
     </Ul>
   )
 }
