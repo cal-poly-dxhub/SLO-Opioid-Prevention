@@ -1,16 +1,10 @@
 import React, { useState } from 'react'; 
 import { Collapse, Table } from 'react-bootstrap'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
-import { faAngleLeft} from '@fortawesome/free-solid-svg-icons'; 
 import { Link } from 'react-router-dom'; 
 
 function GoodSamaritan(props) {
     const [open, setOpen] = useState(false);
     
-    // const show = (swapID) => {
-    //     document.getElementById('example-collapse-text').innerHTML = document.getElementById(swapID).innerHTML;
-    //   }
-
     return (
         <div class="card" style={{zIndex: '0'}}> 
             <h5 class="card-header text-center" style={{background: '#F2C029', color: '#00426A', fontWeight: 'bold'}}>The Good Samaritan Law</h5>
@@ -48,7 +42,7 @@ function GoodSamaritan(props) {
                                     <td>Pennsylvania</td>
                                 </tr>
                                 <tr>
-                                    <td><Link to=
+                                    <td><Link style={{color: '#00426A'}} to=
                                         {{pathname: '/good-samaritan', 
                                           search: '?state=ca'
                                         }}>California</Link></td>

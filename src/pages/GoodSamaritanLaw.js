@@ -1,14 +1,7 @@
 import React from 'react'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
-import { faAngleLeft} from '@fortawesome/free-solid-svg-icons'; 
 import StateLaw from '../components/StateLaw'; 
 
 class GoodSamaritanLaw extends React.Component {
-    constructor(props) {
-        super(props); 
-    }
-
-
     render () {
         const loc = window.location.href; 
         const name = loc.substring(loc.indexOf('=') + 1); 

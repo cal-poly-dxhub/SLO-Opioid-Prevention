@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'; 
 import './index.css';
-import App from './App';
 import Navbar from './components/Nav/Navbar';
 import Home from './pages/Home'; 
 import PreventOverdose from './pages/PreventOverdose'; 
@@ -11,6 +10,8 @@ import PublicResources from './pages/PublicResources';
 import reportWebVitals from './reportWebVitals';
 import GoodSamaritanLaw from './pages/GoodSamaritanLaw';
 import './custom.scss';
+import DeliveryOrderForm from './components/DeliveryOrderForm';
+import OrderConfirmationCard from './components/OrderConfirmationCard';
 
 ReactDOM.render(
   <div className="App">
@@ -39,6 +40,16 @@ ReactDOM.render(
       <Switch>
         <Route path='/good-samaritan' exact={true}>
           <GoodSamaritanLaw /> 
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path='/delivery-form' exact={true}>
+          <DeliveryOrderForm /> 
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path='/delivery-confirm' exact={true}>
+          <OrderConfirmationCard /> 
         </Route>
       </Switch>
     </Router>

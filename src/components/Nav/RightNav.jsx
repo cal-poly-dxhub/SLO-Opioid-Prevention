@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {Link} from 'react-router-dom'; 
 
 const Ul = styled.ul`
   list-style: none;
@@ -33,18 +34,18 @@ const Ul = styled.ul`
 const RightNav = ({ open }) => {
   return (
     <Ul open={open}>
-      <li>Good Samaritan Law</li>
-      <a href="/prevent-overdose"><li>Preventing an Overdose</li></a>
-      <a href="/overdose-response"><li>How to Give Naloxone
+      <Link to={{pathname: '/'}}><li>Good Samaritan Law</li></Link>
+      <Link to={{pathname: "/prevent-overdose"}}><li>Preventing an Overdose</li></Link>
+      <Link to={{pathname: "/overdose-response"}}><li>How to Give Naloxone
             <li className="inner-list">Signs of an Overdose</li>
             <li className="inner-list">Giving Naloxone</li>
             <li className="inner-list">Calling Emergency Medical Help</li>
             <li className="inner-list">Naloxone FAQs</li>        
-      </li></a>
-      <a href="/public-resources"><li>Where can I get Naloxone
+      </li></Link>
+      <Link to={{pathname: "/public-resources"}}><li>Where can I get Naloxone
             <li className="inner-list">Free Public Resources</li>
             <li className="inner-list">Pharmacy Finder</li>
-      </li></a>
+      </li></Link>
     </Ul>
   )
 }
