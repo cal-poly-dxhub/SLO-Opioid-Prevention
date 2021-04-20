@@ -10,8 +10,10 @@ import PublicResources from './pages/PublicResources';
 import reportWebVitals from './reportWebVitals';
 import GoodSamaritanLaw from './pages/GoodSamaritanLaw';
 import './custom.scss';
-import DeliveryOrderForm from './components/DeliveryOrderForm';
+import OrderForm from './pages/OrderForm';
 import OrderConfirmationCard from './components/OrderConfirmationCard';
+import NaloxoneFAQs from './pages/NaloxoneFAQs';
+import PharmacyFinder from './pages/PharmacyFinder';
 
 ReactDOM.render(
   <div className="App">
@@ -44,12 +46,22 @@ ReactDOM.render(
       </Switch>
       <Switch>
         <Route path='/delivery-form' exact={true}>
-          <DeliveryOrderForm /> 
+          <OrderForm /> 
         </Route>
       </Switch>
       <Switch>
         <Route path='/delivery-confirm' exact={true}>
           <OrderConfirmationCard /> 
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path='/faqs' exact={true}>
+          <NaloxoneFAQs /> 
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path='/pharmacy-finder' exact={true}>
+          <PharmacyFinder /> 
         </Route>
       </Switch>
     </Router>

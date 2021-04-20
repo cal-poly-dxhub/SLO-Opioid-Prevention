@@ -24,11 +24,11 @@ class OverdoseResponse extends React.Component {
                     <h6 className='container d-flex align-items-center flex-column'
                         style={{height: '40px', background: '#F2C029', borderRadius: '40px', color: '#00426A', 
                         fontWeight: 'bold', padding: '10px', alignItems: 'center', marginTop: '20px'}}>Overdose Response</h6>
-                    <ResponseCard header='Identify opioid overdose and check for response' closedText='Signs of an Overdose'
+                    <ResponseCard header='Identify opioid overdose and check for response'
                         image='https://slo-opioid.s3-us-west-2.amazonaws.com/Icons/Signs-of-Overdose.png' 
                         num='1'
                         openText={
-                            <div className='container d-flex align-items-left flex-column' style={{ fontWeight: 'bold'}}>
+                            <div className='container d-flex align-items-left flex-column' style={{color: '#000', marginRight: '342px', marginLeft: '65px'}}>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>Ask</span> the person if they are okay and shout name.</p>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>Shake</span> shoulders and firmly rub the middle of their chest</p>
                                 <p><h6 style={{color: '#027368', fontWeight: 'bold'}}>Check for signs of an opioid overdose:</h6> </p>
@@ -46,7 +46,7 @@ class OverdoseResponse extends React.Component {
                     <ResponseCard header='Give Naloxone' image='https://slo-opioid.s3-us-west-2.amazonaws.com/Icons/How-to-Give-Naloxone.png' 
                         num='2'
                         openText={
-                            <div className='container d-flex align-items-left flex-column' style={{color: '#000'}}>
+                            <div className='container d-flex align-items-left flex-column' style={{color: '#000', paddingLeft: '80px'}}>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>Remove</span> NARCAN Nasal spray from the box. Peel back the tab with the circle to open the NARCAN Nasal Spray.</p>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>Hold</span> the NARCAN Nasal Spray with your thumb on the bottom of the plunger and your first and middle fingers on either side of the nozzle.</p>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>Gently insert the tip of the nozzle into either nostril.</span> Tilt the person's head back and provide support under the neck with your hand.
@@ -69,7 +69,7 @@ class OverdoseResponse extends React.Component {
                     <ResponseCard header='Call for emergency help' image='https://slo-opioid.s3-us-west-2.amazonaws.com/Icons/Overdose-Response.png'
                         num='3'
                         openText={
-                            <div className='container d-flex align-items-left flex-column' style={{color: '#000'}}>
+                            <div className='container d-flex align-items-left flex-column' style={{color: '#000', paddingLeft: '80px'}}>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>Call 911 for emergency medical help right away</span> Tell the operator there's a person unresponsive at your location (give an address or 
                                                                                         nearest intersection). Stay with the person until help arrives.</p>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>Move the person on their side (recovery position)</span> after giving the NARCAN Nasal Spray.</p>
@@ -84,7 +84,7 @@ class OverdoseResponse extends React.Component {
                     <ResponseCard header='Aftercare' 
                         num='4'
                         openText={
-                            <div className='container d-flex align-items-left flex-column' >
+                            <div className='container d-flex align-items-left flex-column' style={{paddingLeft: '80px'}}>
                                 <p><span style={{color: '#027368', fontWeight: 'bold'}}>It's very important that 911 is called so that the individual can receive a medical evaluation.</span> Naloxone should wear off in 20-90 
                                                                                         minutes - the short half-life of Naloxone and potentially much longer half-life of an opioid could allow the person to overdose again and 
                                                                                         stop breathing.</p>
@@ -93,7 +93,8 @@ class OverdoseResponse extends React.Component {
                                 
                                 <h6 style={{color: '#027368', fontWeight: 'bold'}}>Person should be observed for at least four (4) hours; don't allow them to do more opioids.</h6>
                             </div>} />
-                        
+                 <Link to={{pathname: '/faqs'}}><button style={{background: '#3EBCB4', color: '#fff', border: 'none', fontWeight: 'bold', padding: '5px', 
+                        borderRadius: '5px', marginTop: '10px'}}>Naloxone FAQs</button></Link>
                 </div>
             </div>  
         )

@@ -40,11 +40,11 @@ const RightNav = ({ open }) => {
             <li className="inner-list">Signs of an Overdose</li>
             <li className="inner-list">Giving Naloxone</li>
             <li className="inner-list">Calling Emergency Medical Help</li>
-            <li className="inner-list">Naloxone FAQs</li>        
+            <Link to={{pathname: "/faqs"}}><li className="inner-list">Naloxone FAQs</li></Link>        
       </li></Link>
       <Link to={{pathname: "/public-resources"}}><li>Where can I get Naloxone
             <li className="inner-list">Free Public Resources</li>
-            <li className="inner-list">Pharmacy Finder</li>
+            <Link to={{pathname: "/pharmacy-finder"}}><li className="inner-list">Pharmacy Finder</li></Link>
       </li></Link>
     </Ul>
   )

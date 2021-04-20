@@ -1,8 +1,9 @@
 import React, {useState } from 'react'; 
 import { Form, Col } from 'react-bootstrap'; 
-import { Link, useHistory } from 'react-router-dom'; 
+import { Link } from 'react-router-dom'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faAngleLeft} from '@fortawesome/free-solid-svg-icons'; 
+import axios from 'axios';
 
 
 const regExpPhone = RegExp(
@@ -22,24 +23,6 @@ const checkValidity = ({ isError, ...rest}) => {
         }
     }); 
 
-    // if (isValid) {
-
-    // }
-
-    // if (isValid) {
-    //     let phone = ""
-    //     Object.values(rest).forEach(val => {
-    //         if (val.length === 10) {
-    //             isValid = true
-    //             phone = val
-    //         }
-    //     }); 
-    // }
-    
-    // if (phone.length === 0) {
-    //     isValid = false; 
-    // }
-
     return isValid; 
 };
 
@@ -51,7 +34,6 @@ function DeliveryOrderForm(props) {
             city: "",
             state: "",
             zip: "", 
-            textNotif: false,  
             phone: "",
             notes: "", 
             courseComplete: false,
@@ -98,7 +80,7 @@ function DeliveryOrderForm(props) {
             
             case "phone": 
                 isError.phone = 
-                    regExpPhone.test(value) ? "" : "Not a valid 10-digit phone number.";
+                    regExpPhone.test(value) ? "" : "Not a valid 10-digit phone number. Use XXX-XXX-XXXX format.";
                 break; 
             case "course":
                 isError.courseComplete = value.length > 0 ? "" : "Required field"; 
@@ -112,6 +94,8 @@ function DeliveryOrderForm(props) {
                 isError, 
                 [name]: value
             }));
+
+            props.handleUpdate(name, value); 
 
     }
 
@@ -127,13 +111,32 @@ function DeliveryOrderForm(props) {
     }
     
 
-    const history = useHistory(); 
+    //const history = useHistory(); 
 
-    const handleSubmitClick = (e) => {
+    const handleSubmitClick = async(e) => {
         e.preventDefault(); 
         if (checkValidity(state)) {
             console.log(state); 
-            history.push('/delivery-confirm');
+            const formName = state.name; 
+            const formPhone = state.phone; 
+            const formStreet = state.street; 
+            const formCity = state.city; 
+            const formState = state.state; 
+            const formZip = state.zip; 
+            const formNotes = state.notes; 
+            await axios.post(
+                'https://inwtz8r2sd.execute-api.us-west-2.amazonaws.com/dev/',
+                { name: `${formName}`, 
+                  phone: `${formPhone}`, 
+                  street: `${formStreet}`, 
+                  city: `${formCity}`, 
+                  state: `${formState}`, 
+                  zip: `${formZip}`, 
+                  notes: `${formNotes}`}
+            ); 
+
+            props.nextStep(); 
+            //history.push('/delivery-confirm');
         }
         else {
             console.log("Form is invalid!"); 
@@ -239,7 +242,7 @@ function DeliveryOrderForm(props) {
                     </Form.Group>
                     <Form.Group>
                         <Form.Label style={{color: '#3EBCB4', fontWeight: 'bold'}}>Notes/Delivery Instructions</Form.Label>
-                        <Form.Control type='text'></Form.Control>
+                        <Form.Control type='text' onChange={handleChange}></Form.Control>
                     </Form.Group>
                     <Form.Group>
                         <Form.Check label="I acknowledge that I have completed the NARCAN Administration and Overdose Response course." 

@@ -34,7 +34,7 @@ class PublicResources extends React.Component {
                                         <td align='right'>Wednesdays 5:30 - 8:15 PM</td>
                                     </tr>
                                     </tbody></Table>}/>    
-                    <h5 style={{fontWeight: 'bold', color : '#F2C029', textDecoration: 'underline'}}>Find Other Resources</h5>
+                    <Link to={{pathname: '/pharmacy-finder'}}><h5 style={{fontWeight: 'bold', color : '#F2C029', textDecoration: 'underline'}}>Find Other Resources</h5></Link>
                 </div>
             </div>
         )
