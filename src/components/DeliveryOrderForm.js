@@ -242,7 +242,7 @@ function DeliveryOrderForm(props) {
                     </Form.Group>
                     <Form.Group>
                         <Form.Label style={{color: '#3EBCB4', fontWeight: 'bold'}}>Notes/Delivery Instructions</Form.Label>
-                        <Form.Control type='text' onChange={handleChange}></Form.Control>
+                        <Form.Control name='notes' type='text' onChange={handleChange}></Form.Control>
                     </Form.Group>
                     <Form.Group>
                         <Form.Check label="I acknowledge that I have completed the NARCAN Administration and Overdose Response course." 

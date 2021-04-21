@@ -5,11 +5,12 @@ import { faAngleLeft} from '@fortawesome/free-solid-svg-icons';
 import {Link} from 'react-router-dom'; 
 
 function OrderConfirmationCard(props) {
-    const today = new Date(); 
-    const day = today.getUTCDay();  
-    const month = today.toLocaleString('default', { month : 'long'}); 
-    const year = today.getUTCFullYear(); 
-    const date = month + ' ' + day + ', ' + year; 
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy = today.getFullYear();
+
+    const date = mm + '/' + dd + '/' + yyyy;
 
     const deliveryString = props.phone === "" ? "" : " You will receive a text when your kit is out for delivery."; 
     return (
