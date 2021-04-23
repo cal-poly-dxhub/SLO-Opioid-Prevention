@@ -14,6 +14,7 @@ import OrderForm from './pages/OrderForm';
 import OrderConfirmationCard from './components/OrderConfirmationCard';
 import NaloxoneFAQs from './pages/NaloxoneFAQs';
 import PharmacyFinder from './pages/PharmacyFinder';
+import OrderFulfillment from './pages/OrderFulfillment';
 
 ReactDOM.render(
   <div className="App">
@@ -62,6 +63,11 @@ ReactDOM.render(
       <Switch>
         <Route path='/pharmacy-finder' exact={true}>
           <PharmacyFinder /> 
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path='/order-fulfillment' exact={true}>
+          <OrderFulfillment /> 
         </Route>
       </Switch>
     </Router>

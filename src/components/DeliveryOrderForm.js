@@ -111,7 +111,6 @@ function DeliveryOrderForm(props) {
     }
     
 
-    //const history = useHistory(); 
 
     const handleSubmitClick = async(e) => {
         e.preventDefault(); 
@@ -124,6 +123,10 @@ function DeliveryOrderForm(props) {
             const formState = state.state; 
             const formZip = state.zip; 
             const formNotes = state.notes; 
+            const currDate = new Date(); 
+            const date = (currDate.getMonth() + 1) + "/" + currDate.getDate() + "/" + currDate.getFullYear() + ", " +
+                currDate.getHours() + ":" + currDate.getMinutes() + ":" + currDate.getSeconds(); 
+            const shipment = "not shipped"; 
             await axios.post(
                 'https://inwtz8r2sd.execute-api.us-west-2.amazonaws.com/dev/',
                 { name: `${formName}`, 
@@ -132,11 +135,12 @@ function DeliveryOrderForm(props) {
                   city: `${formCity}`, 
                   state: `${formState}`, 
                   zip: `${formZip}`, 
-                  notes: `${formNotes}`}
+                  notes: `${formNotes}`, 
+                  date: `${date}`, 
+                  shipment: `${shipment}`}
             ); 
 
             props.nextStep(); 
-            //history.push('/delivery-confirm');
         }
         else {
             console.log("Form is invalid!"); 

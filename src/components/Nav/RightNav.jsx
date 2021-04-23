@@ -46,6 +46,7 @@ const RightNav = ({ open }) => {
             <li className="inner-list">Free Public Resources</li>
             <Link to={{pathname: "/pharmacy-finder"}}><li className="inner-list">Pharmacy Finder</li></Link>
       </li></Link>
+      <Link to={{pathname: '/order-fulfillment'}}><li>Naloxone Order Fulfillment</li></Link>
     </Ul>
   )
 }
