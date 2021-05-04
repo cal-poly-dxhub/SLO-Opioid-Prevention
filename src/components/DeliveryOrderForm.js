@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faAngleLeft} from '@fortawesome/free-solid-svg-icons'; 
 import axios from 'axios';
+import parsePhoneNumber from 'libphonenumber-js'; 
 
 
 const regExpPhone = RegExp(
@@ -117,7 +118,7 @@ function DeliveryOrderForm(props) {
         if (checkValidity(state)) {
             console.log(state); 
             const formName = state.name; 
-            const formPhone = state.phone; 
+            const formPhone = parsePhoneNumber(state.phone, 'US').format('E.164'); 
             const formStreet = state.street; 
             const formCity = state.city; 
             const formState = state.state; 
