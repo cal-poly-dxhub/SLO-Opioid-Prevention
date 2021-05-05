@@ -6,7 +6,7 @@ import { faAngleLeft} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom'; 
 
 
-
+// creates and populates PublicResourceCard components and displays them
 class PublicResources extends React.Component {
 
     render () {

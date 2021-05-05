@@ -1,6 +1,8 @@
 import React from 'react'; 
 import { Table } from 'react-bootstrap';
 
+// functional component for "where to find naloxone" page
+// include name, address, phone number, available services, pickup/delivery options
 function PublicResourceCard(props) {
     return (
         <Table responsive='lg' borderless='true' style={{background: '#fff'}}>

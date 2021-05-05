@@ -49,7 +49,7 @@ function DeliveryOrderForm(props) {
             }
     })
     
-    
+    // modifies state based on user input and checks for any errors
     const handleChange = (e) => {
         e.preventDefault(); 
         const {name, value} = e.target; 
@@ -100,6 +100,7 @@ function DeliveryOrderForm(props) {
 
     }
 
+    // reveals additional field if user indicates they want to be notified via text
     const phoneCheck = (e) => {
         
         if (document.getElementById('yesCheck').checked) {
@@ -112,7 +113,7 @@ function DeliveryOrderForm(props) {
     }
     
 
-
+    // validates form and posts data to dynamodb 
     const handleSubmitClick = async(e) => {
         e.preventDefault(); 
         if (checkValidity(state)) {

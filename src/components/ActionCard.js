@@ -1,5 +1,7 @@
 import React from 'react'; 
 
+// functional component that appears on landing page
+// contains header, footer and image
 function ActionCard(props) {
     return (
         

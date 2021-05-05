@@ -2,6 +2,8 @@ import React from 'react';
 import DeliveryOrderForm from '../components/DeliveryOrderForm';
 import OrderConfirmationCard from '../components/OrderConfirmationCard'; 
 
+// wrapper component that stores information from DeliveryOrderForm and 
+// passes it to OrderConfirmationCard and renders it after user submits form
 class OrderForm extends React.Component {
     constructor(props) {
         super(props); 

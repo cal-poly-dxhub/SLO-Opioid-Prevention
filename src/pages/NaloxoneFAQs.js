@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft} from '@fortawesome/free-solid-svg-icons'; 
 import { Link } from 'react-router-dom'; 
 
-
-
+// contains two tables populated with faqs and answers
+// linked from overdose response page
 class NaloxoneFAQs extends React.Component {
 
     render () {

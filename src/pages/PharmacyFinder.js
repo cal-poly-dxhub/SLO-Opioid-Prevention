@@ -1,6 +1,7 @@
 import React from 'react'; 
 import PharmacyCard from '../components/PharmacyCard'; 
 
+// renders PharmacyCard components based on GoogleMap data (not implemented)
 class PharmacyFinder extends React.Component {
     constructor(props) {
         super(props);

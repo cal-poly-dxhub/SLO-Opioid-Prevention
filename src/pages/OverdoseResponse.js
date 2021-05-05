@@ -4,6 +4,8 @@ import { faAngleLeft} from '@fortawesome/free-solid-svg-icons';
 import { ResponsiveEmbed } from 'react-bootstrap'; 
 import ResponseCard from '../components/ResponseCard'; 
 import { Link } from 'react-router-dom'; 
+
+// creates and populates ResponseCard components and displays them
 class OverdoseResponse extends React.Component {
 
     render () {

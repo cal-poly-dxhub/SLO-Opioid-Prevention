@@ -3,6 +3,8 @@ import { Collapse } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faAngleDown} from '@fortawesome/free-solid-svg-icons'; 
 
+// functional component for "overdose response" page
+// includes number, image, header, collapsible text
 function ResponseCard(props) {
     const [open, setOpen] = useState(false);
 
@@ -19,9 +21,6 @@ function ResponseCard(props) {
                     </div>
                 </div>
                 <div style={{alignItems: 'left', justifyContent: 'left', position: 'relative'}}>
-                    {/* <button style={{height: '135px', width: '135px', borderRadius: '50%', background: '#61788C', opacity: '0.2', 
-                        fontWeight: 'bold', zIndex: '1', border: 'none', flexShrink: '0', 
-                        position: 'absolute', margin: '0px 100px 100px 0px', padding: '0px 100px 100px 0px'}}></button> */}
                     <img src={props.image} alt='icon' style={{height: '50px', width: '50px', zIndex: '0'}}></img>
                 </div>
             </div>

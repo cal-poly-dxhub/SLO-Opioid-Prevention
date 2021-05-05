@@ -3,7 +3,9 @@ import ActionCard from '../components/ActionCard';
 import GoodSamaritan from '../components/GoodSamaritan';
 import { Link } from 'react-router-dom'; 
 
- 
+ // landing page
+ // contains links to prevent overdose, overdose response, and where can i get naloxone
+ // contains collapsible good samaritan law component that contains links to good samaritan law page
 function Home() {
     return (
         <div style={{background : '#00426A', padding: '15px'}}>

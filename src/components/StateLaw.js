@@ -2,6 +2,8 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faAngleLeft} from '@fortawesome/free-solid-svg-icons'; 
  
+// functional component to display good samaritan law for a given state
+// includes state name and law
 function StateLaw(props) {
     return (
         <div style={{padding: '15px'}}>

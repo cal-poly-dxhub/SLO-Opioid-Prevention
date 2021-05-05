@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Collapse, Table } from 'react-bootstrap'; 
 import { Link } from 'react-router-dom'; 
 
+// functional component that appears on landing page
+// expands to reveal list of states, clicking on one navigates to a page with that state's 
+// good samaritan law (currently only california's implemented)
 function GoodSamaritan(props) {
     const [open, setOpen] = useState(false);
     

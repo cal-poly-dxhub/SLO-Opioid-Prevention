@@ -4,10 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft} from '@fortawesome/free-solid-svg-icons'; 
 import {Link} from 'react-router-dom'; 
 
+// functional component populated by user input in delivery form
 function OrderConfirmationCard(props) {
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); 
     const yyyy = today.getFullYear();
 
     const date = mm + '/' + dd + '/' + yyyy;

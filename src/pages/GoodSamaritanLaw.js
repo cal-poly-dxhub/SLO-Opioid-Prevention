@@ -1,6 +1,8 @@
 import React from 'react'; 
 import StateLaw from '../components/StateLaw'; 
 
+// page that generates StateLaw functional component based on state user clicked on good samaritan component
+// and populates it with that state's information
 class GoodSamaritanLaw extends React.Component {
     render () {
         const loc = window.location.href; 

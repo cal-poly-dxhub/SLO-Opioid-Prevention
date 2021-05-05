@@ -5,6 +5,7 @@ import ResponsiveEmbed from 'react-bootstrap/ResponsiveEmbed';
 import PreventCard from '../components/PreventCard'; 
 import { Link } from 'react-router-dom'; 
 
+// creates and populates PreventCard components and displays them
 class PreventOverdose extends React.Component {
 
     render () {

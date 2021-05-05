@@ -1,5 +1,7 @@
 import React from 'react'; 
 
+// functional component for "preventing an overdose" page
+// includes number, text and an image
 function PreventCard(props) {
     return (
         <div className='container d-flex align-items-space-between flex-row'

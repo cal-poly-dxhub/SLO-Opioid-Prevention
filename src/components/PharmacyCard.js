@@ -2,6 +2,9 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faCheck } from '@fortawesome/free-solid-svg-icons'; 
 
+// functional component to display info about pharmacies 
+// includes a letter that corresponds to order, name, address, open/closing times, 
+// whether there are in-store pickup/delivery options, link to website, link to directions
 function PharmacyCard(props) {
     return (
         <div className='container d-flex flex-row' 

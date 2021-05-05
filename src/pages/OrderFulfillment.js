@@ -17,6 +17,7 @@ class OrderFulfillment extends React.Component {
         this.updateData = this.updateData.bind(this); 
     }
 
+// retrieves order data from dynamodb via api 
 async retrieveData() {
     await axios
         .get('https://inwtz8r2sd.execute-api.us-west-2.amazonaws.com/dev/')
@@ -25,15 +26,10 @@ async retrieveData() {
             this.setState({ orders : response.data.Items}) }); 
     }
 
+// updates order info for a given customer by changing the shipment status to "shipped"
 async updateData(e) {
-    //e.preventDefault(); 
     const index = e.target.value; 
     const name = this.state.orders[index].name; 
-    // let orders = [...this.state.orders]; 
-    // let order = {...orders[index]}; 
-    // order.shipment = "shipped"; 
-    // orders[index] = order; 
-    // this.setState({orders}); 
 
     await axios.put(
         'https://inwtz8r2sd.execute-api.us-west-2.amazonaws.com/dev/', 
@@ -41,6 +37,7 @@ async updateData(e) {
    
 }
 
+// filters orders based on shipment status
 filterOrders() {
     this.state.orders.map((order) => {
         const shipment = order.shipment; 
@@ -53,10 +50,12 @@ filterOrders() {
     })
 }
 
+// initiates db query and filters the data that is returned 
 async componentWillMount() {
     await this.retrieveData().then(() => this.filterOrders()); 
 }
 
+// create table populated with orders that haven't been shipped
 renderNotShippedTableData() {
     return this.state.notShipped.map((order, index) => {
         const { name, phone, street, city, state, zip, notes, date } = order; 
@@ -80,6 +79,7 @@ renderNotShippedTableData() {
     }); 
 }
 
+// creates a table populated with orders that have been shipped 
 renderShippedTableData() {
     return this.state.shipped.map((order, index) => {
         const { name, phone, street, city, state, zip, notes, date } = order; 
