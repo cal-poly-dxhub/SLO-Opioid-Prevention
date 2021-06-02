@@ -1,0 +1,659 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  apiGatewayName:
+    Type: String
+    Default: my-api
+  apiGatewayStageName:
+    Type: String
+    AllowedPattern: '[a-z0-9]+'
+    Default: call
+  lambdaGetFunctionName:
+    Type: String
+    AllowedPattern: '[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+'
+    Default: my-get-function
+  lambdaPostFunctionName:
+    Type: String
+    AllowedPattern: '[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+'
+    Default: my-post-function
+  lambdaPutFunctionName:
+    Type: String
+    AllowedPattern: '[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+'
+    Default: my-put-function
+  lambdaSNSFunctionName:
+    Type: String
+    AllowedPattern: '[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+'
+    Default: my-sns-function
+  dynamoTableName:
+    Type: String
+    Default: my-dynamo-table
+  s3BucketName:
+    Type: String
+    Default: my-website-bucket
+Resources: 
+  apiGateway:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Description: Example API Gateway
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: !Ref apiGatewayName
+  apiGatewayHTTPGetMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: '200'
+        Type: AWS
+        Uri: !Sub 
+          - >-
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn: !GetAtt 
+              - lambdaGetFunction
+              - Arn
+      MethodResponses:
+        - ResponseModels:
+            application/json: Empty
+          StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Credentials: true
+      ResourceId: !GetAtt 
+        - apiGateway
+        - RootResourceId
+      RestApiId: !Ref apiGateway
+  apiGatewayHTTPPostMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: '200'
+        Type: AWS
+        Uri: !Sub 
+          - >-
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn: !GetAtt 
+              - lambdaPostFunction
+              - Arn
+      MethodResponses:
+        - ResponseModels:
+            application/json: Empty
+          StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Credentials: true
+      ResourceId: !GetAtt 
+        - apiGateway
+        - RootResourceId
+      RestApiId: !Ref apiGateway
+  apiGatewayHTTPPutMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: PUT
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: '200'
+        Type: AWS
+        Uri: !Sub 
+          - >-
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn: !GetAtt 
+              - lambdaPutFunction
+              - Arn
+      MethodResponses:
+        - ResponseModels:
+            application/json: Empty
+          StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Credentials: true
+      ResourceId: !GetAtt 
+        - apiGateway
+        - RootResourceId
+      RestApiId: !Ref apiGateway
+  apiGatewayDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    DependsOn:
+      - apiGatewayHTTPGetMethod
+      - apiGatewayHTTPPostMethod
+      - apiGatewayHTTPPutMethod
+    Properties:
+      RestApiId: !Ref apiGateway
+      StageName: !Ref apiGatewayStageName
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref s3BucketName
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+    DeletionPolicy: Retain
+  BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      PolicyDocument:
+        Id: MyPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+      Bucket: !Ref S3Bucket
+  DynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: name
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
+      StreamSpecification: 
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TableName: !Ref dynamoTableName
+  lambdaGetFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const docClient = new AWS.DynamoDB.DocumentClient({region:
+          process.env.AWS_REGION});
+            exports.handler = async (event, context, callback) => {
+                console.log("Processing...");
+                const params = {
+                TableName: process.env.dynamoTableName
+                };
+                const response = {
+                    statusCode: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Credentials': true,
+                    },
+                    body: JSON.stringify('Hello from new Lambda!'),
+                };
+    
+            return await docClient.scan(params).promise()
+                .catch((err) => {console.log(err);})
+            };
+      Description: Gets all naloxone deliveries from DynamoDB table
+      Environment:
+        Variables:
+          dynamoTableName: !Ref dynamoTableName
+      FunctionName: !Ref lambdaGetFunctionName
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt 
+        - lambdaGetIAMRole
+        - Arn
+      Runtime: nodejs12.x
+  lambdaGetApiGatewayInvoke:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt 
+        - lambdaGetFunction
+        - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub >-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}/*/GET/
+  lambdaGetIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Effect: Allow
+                Resource:
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${lambdaGetFunctionName}:*
+          PolicyName: lambda
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: VisualEditor0
+                Effect: Allow
+                Action:
+                  - 'dynamodb:ListContributorInsights'
+                  - 'dynamodb:DescribeReservedCapacityOfferings'
+                  - 'dynamodb:ListGlobalTables'
+                  - 'dynamodb:ListTables'
+                  - 'dynamodb:DescribeReservedCapacity'
+                  - 'dynamodb:ListBackups'
+                  - 'dynamodb:PurchaseReservedCapacityOfferings'
+                  - 'dynamodb:DescribeLimits'
+                  - 'dynamodb:ListExports'
+                  - 'dynamodb:ListStreams'
+                Resource: '*'
+              - Sid: VisualEditor1
+                Effect: Allow
+                Action: 'dynamodb:*'
+                Resource: !GetAtt 
+                  - DynamoDBTable
+                  - Arn
+          PolicyName: lambda-dynamo
+  lambdaGetLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${lambdaGetFunctionName}'
+      RetentionInDays: 90
+  lambdaPostFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const docClient = new AWS.DynamoDB.DocumentClient({region:
+          process.env.AWS_REGION});
+            exports.handler = (event, context, callback) => {
+                console.log("Processing...");
+                const params = {
+                    Item: {
+                        name: event.name,
+                        phone: event.phone, 
+                        street: event.street, 
+                        city: event.city, 
+                        state: event.state, 
+                        zip: event.zip, 
+                        notes: event.notes, 
+                        date: event.date,
+                        shipment: event.shipment
+                    },
+                    TableName: process.env.dynamoTableName
+                };
+                const response = {
+                statusCode: 200,
+                headers: {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Credentials': true,
+                },
+                body: JSON.stringify('Hello from new Lambda!'),
+              };
+                
+                docClient.put(params, function(err, data) {
+                    if(err){
+                        callback(err, null);
+                    } else {
+                        callback(null, data);
+                    }
+                })
+            };
+      Description: Posts new delivery order to DynamoDB
+      Environment:
+        Variables:
+          dynamoTableName: !Ref dynamoTableName
+      FunctionName: !Ref lambdaPostFunctionName
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt 
+        - lambdaPostIAMRole
+        - Arn
+      Runtime: nodejs12.x
+  lambdaPostApiGatewayInvoke:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt 
+        - lambdaPostFunction
+        - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub >-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}/*/POST/
+  lambdaPostIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Effect: Allow
+                Resource:
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${lambdaPostFunctionName}:*
+          PolicyName: lambda
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: VisualEditor0
+                Effect: Allow
+                Action:
+                  - 'dynamodb:ListContributorInsights'
+                  - 'dynamodb:DescribeReservedCapacityOfferings'
+                  - 'dynamodb:ListGlobalTables'
+                  - 'dynamodb:ListTables'
+                  - 'dynamodb:DescribeReservedCapacity'
+                  - 'dynamodb:ListBackups'
+                  - 'dynamodb:PurchaseReservedCapacityOfferings'
+                  - 'dynamodb:DescribeLimits'
+                  - 'dynamodb:ListExports'
+                  - 'dynamodb:ListStreams'
+                Resource: '*'
+              - Sid: VisualEditor1
+                Effect: Allow
+                Action: 'dynamodb:*'
+                Resource: !GetAtt 
+                  - DynamoDBTable
+                  - Arn
+          PolicyName: lambda-dynamo
+  lambdaPostLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${lambdaPostFunctionName}'
+      RetentionInDays: 90
+  lambdaPutFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const docClient = new AWS.DynamoDB.DocumentClient({region:
+          process.env.AWS_REGION});
+          exports.handler = (event, context, callback) => {
+            console.log("Processing...");
+            const params = {
+                Key: {
+                    name: event.name
+                },
+                TableName: process.env.dynamoTableName, 
+                UpdateExpression: "set shipment = :s",
+                ExpressionAttributeValues:{
+                    ":s":"shipped"
+                },
+                ReturnValues:"UPDATED_NEW"
+            };
+            const response = {
+                statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                },
+                body: JSON.stringify('Hello from new Lambda!')
+            };
+
+            console.log("Updating the item...");
+            docClient.update(params, function(err, data) {
+                if (err) {
+                    console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                } else {
+                    console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+            }
+            })
+          };
+      Description: Update shipping status of order in DynamoDB
+      Environment:
+        Variables:
+          dynamoTableName: !Ref dynamoTableName
+      FunctionName: !Ref lambdaPutFunctionName
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt 
+        - lambdaPutIAMRole
+        - Arn
+      Runtime: nodejs12.x
+  lambdaPutApiGatewayInvoke:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt 
+        - lambdaPutFunction
+        - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub >-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}/*/PUT/
+  lambdaPutIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Effect: Allow
+                Resource:
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${lambdaPutFunctionName}:*
+          PolicyName: lambda
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: VisualEditor0
+                Effect: Allow
+                Action:
+                  - 'dynamodb:ListContributorInsights'
+                  - 'dynamodb:DescribeReservedCapacityOfferings'
+                  - 'dynamodb:ListGlobalTables'
+                  - 'dynamodb:ListTables'
+                  - 'dynamodb:DescribeReservedCapacity'
+                  - 'dynamodb:ListBackups'
+                  - 'dynamodb:PurchaseReservedCapacityOfferings'
+                  - 'dynamodb:DescribeLimits'
+                  - 'dynamodb:ListExports'
+                  - 'dynamodb:ListStreams'
+                Resource: '*'
+              - Sid: VisualEditor1
+                Effect: Allow
+                Action: 'dynamodb:*'
+                Resource: !GetAtt 
+                  - DynamoDBTable
+                  - Arn
+          PolicyName: lambda-dynamo
+  lambdaPutLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${lambdaPutFunctionName}'
+      RetentionInDays: 90
+  lambdaSNSFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+            'use strict';
+            var AWS = require("aws-sdk");
+            AWS.config.update({region: process.env.AWS_REGION});
+            var sns = new AWS.SNS({apiVersion: '2010-03-31'});
+
+            exports.handler = (event, context, callback) => {
+
+                event.Records.forEach((record) => {
+                    console.log('Stream record: ', JSON.stringify(record, null, 2));
+
+                if (record.eventName == 'INSERT') {
+                var who = record.dynamodb.NewImage.name.S;
+                var phone = record.dynamodb.NewImage.phone.S;
+                console.log(phone); 
+                if (phone != "") {
+                    var params = {
+                        Message: 'Hi ' + who + ', thank you for your order from SLO Opioid Safety Coalition.' + 
+                            ' You will receive another text when your kit has been shipped. For shipment information changes, ' +
+                            'cancellation, or more information, call (805) 781-1195', 
+                        PhoneNumber: phone 
+                    };
+                    sns.publish(params, function(err, data) {
+                        if (err) {
+                            console.error("Unable to send message. Error JSON:", JSON.stringify(err, null, 2));
+                        } else {
+                            console.log("Results from sending message: ", JSON.stringify(data, null, 2));
+                        }
+                    });
+                    }
+                }
+                if (record.eventName == 'MODIFY') {
+                    var who = record.dynamodb.NewImage.name.S;
+                    var phone = record.dynamodb.NewImage.phone.S;
+                    console.log(phone); 
+                    if (phone != "") {
+                        var params = {
+                            Message: 'Hi ' + who + ', thank you for your order from SLO Opioid Safety Coalition.' + 
+                                ' Your kit has been shipped and will be arriving soon. For shipment information changes, ' +
+                                'cancellation, or more information, call (805) 781-1195',
+                            PhoneNumber: phone 
+                        };
+                        sns.publish(params, function(err, data) {
+                        if (err) {
+                            console.error("Unable to send message. Error JSON:", JSON.stringify(err, null, 2));
+                        } else {
+                            console.log("Results from sending message: ", JSON.stringify(data, null, 2));
+                        }
+                        });
+                    }
+                }
+            });
+            callback(null, `Successfully processed ${event.Records.length} records.`);
+            };   
+      Description: Sends message to user when order is placed and shipped
+      Environment:
+        Variables:
+          dynamoTableName: !Ref dynamoTableName
+      FunctionName: !Ref lambdaSNSFunctionName
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt 
+        - lambdaSNSIAMRole
+        - Arn
+      Runtime: nodejs12.x
+  lambdaSNSIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyDocument: 
+            Version: 2012-10-17
+            Statement: 
+              - Action: 
+                  - 'lambda:InvokeFunction'
+                Effect: Allow
+                Resource: 
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:function:${lambdaSNSFunctionName}*
+          PolicyName: lambda-invoke 
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Effect: Allow
+                Resource:
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${lambdaSNSFunctionName}:*
+          PolicyName: lambda
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'dynamodb:DescribeStream'
+                  - 'dynamodb:GetRecords'
+                  - 'dynamodb:GetShardIterator'
+                  - 'dynamodb:ListStreams'
+                Effect: Allow
+                Resource: 
+                  - !Sub >-
+                    arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${dynamoTableName}/stream/*
+          PolicyName: lambda-dynamo
+        - PolicyDocument: 
+            Version: 2012-10-17
+            Statement: 
+              - Action: 
+                  - 'sns:Publish'
+                Effect: Allow
+                Resource: '*'
+          PolicyName: sns-publish
+  lambdaSNSEventSource: 
+    Type: 'AWS::Lambda::EventSourceMapping' 
+    Properties: 
+      EventSourceArn: !GetAtt 
+        - DynamoDBTable
+        - StreamArn
+      FunctionName: !Ref lambdaSNSFunctionName
+      StartingPosition: LATEST
+  lambdaSNSLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${lambdaSNSFunctionName}'
+      RetentionInDays: 90
+Outputs:
+  apiGatewayInvokeURL:
+    Value: !Sub >-
+      https://${apiGateway}.execute-api.${AWS::Region}.amazonaws.com/${apiGatewayStageName}
+  WebsiteURL:
+    Value: !GetAtt 
+      - S3Bucket
+      - WebsiteURL
+    Description: URL for website hosted on S3
+  S3BucketSecureURL:
+    Value: !Join 
+      - ''
+      - - 'https://'
+        - !GetAtt 
+          - S3Bucket
+          - DomainName
+    Description: Name of S3 bucket to hold website content
